@@ -1,0 +1,1678 @@
+openapi: 3.0.0
+info:
+  title: API 1win-tv
+  version: 1.0.0
+tags:
+  - name: Методы для работы пользователей с фильмами и сериалами
+
+components:
+  schemas:
+    FilmListRequest:
+      type: object
+      properties:
+        offset:
+          type: number
+          description: Указывает начальную позицию, с которой нужно получить данные
+          default: 0
+        limit:
+          type: number
+          description: Указывает максимальное количество записей или элементов данных, которые должны быть возвращены.
+          default: 20
+        where:
+          type: object
+          properties:
+            title:
+              type: string
+              description: Название фильма/сериала
+            rating:
+              type: object
+              properties:
+                min:
+                  type: number
+                  description: Минимальное значение рейтинга
+                max:
+                  type: number
+                  description: Максимальное значение рейтинга
+              required:
+                - min
+                - max
+            imdb_rating:
+              type: object
+              properties:
+                min:
+                  type: number
+                  description: Минимальное значение рейтинга
+                max:
+                  type: number
+                  description: Максимальное значение рейтинга
+              required:
+                - min
+                - max
+            date:
+              type: object
+              properties:
+                min:
+                  type: string
+                  description: Минимальное значение года выпуска
+                max:
+                  type: string
+                  description: Максимальное значение года выпуска
+              required:
+                - min
+                - max
+            actors:
+              type: array
+              items:
+                type: string
+              description: Содержит в себе элементы типа string. Актерский состав
+            genres:
+              type: array
+              items:
+                type: string
+              description: Содержит в себе элементы типа string. Жанр фильма
+            countries:
+              type: array
+              items:
+                type: string
+              description: Содержит в себе элементы типа string. Страна производства фильма
+            is_serial:
+              type: boolean
+              description: Флаг указания на то, является ли рассматриваемый в списке элемент сериалом (false - не является, true - является)
+        sort:
+          type: array
+          items:
+            type: string
+          description: Содержит в себе элементы типа string. Параметры сортировки списка
+          default:
+            - "date DESC"
+            - "rating DESC"
+
+    FilmList:
+      type: object
+      properties:
+        films:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                description: Уникальный идентификатор фильма
+              genres:
+                type: string
+                description: Список жанров фильма
+              is_serial:
+                type: integer
+                description: Флаг, указывающий, является ли фильм сериалом (0 - не является сериалом, 1 - сериал)
+              title:
+                type: string
+                description: Название фильма/сериала
+              date:
+                type: string
+                format: date-time
+                description: Дата выхода
+              trailer_video_link:
+                type: string
+                description: Ссылка на трейлер фильма
+              name:
+                type: string
+                description: Название фильма
+              name_foreign:
+                type: string
+                description: Зарубежное название фильма
+              director:
+                type: string
+                description: Режиссер фильма
+              country:
+                type: string
+                description: Страна производства
+              genre:
+                type: string
+                description: Жанр фильма
+              rating:
+                type: number
+                description: Рейтинг фильма
+              description:
+                type: string
+                description: Описание фильма
+              actors:
+                type: string
+                description: Список актеров
+              kinopoisk_id:
+                type: string
+                description: Идентификатор фильма на КиноПоиске
+              premiere_world_datetime:
+                type: string
+                format: date-time
+                description: Дата мировой премьеры
+              time_bez:
+                type: integer
+                description: Продолжительность фильма в минутах
+              imdb:
+                type: number
+                description: Рейтинг фильма на IMDb
+              is_disabled:
+                type: integer
+                description: Флаг отключения фильма (0 - не отключен, 1 - отключен)
+          description: Массив фильмов
+        totalCount:
+          type: number
+          description: Число переданных в списке элементов
+      required:
+        - films
+        - totalCount
+
+    FilmCountResponse:
+      type: object
+      properties:
+        films:
+          type: object
+          properties:
+            amount:
+              type: number
+          description: Информация о количестве фильмов/сериалов
+      required:
+        - films
+        - amount
+    FilmSliderRequest:
+      type: object
+      properties:
+        offset:
+          type: number
+          description: Указывает начальную позицию, с которой нужно получить данные
+          default: 0
+        limit:
+          type: number
+          description: Указывает максимальное количество записей или элементов данных, которые должны быть возвращены.
+          default: 20
+
+    FilmSlider:
+      type: object
+      properties:
+        films:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                description: Уникальный идентификатор фильма
+              trailer_video_link:
+                type: string
+                description: Ссылка на трейлер фильма
+              name:
+                type: string
+                description: Название фильма
+              name_foreign:
+                type: string
+                description: Зарубежное название фильма
+              director:
+                type: string
+                description: Режиссер фильма
+              country:
+                type: string
+                description: Страна производства
+              genre:
+                type: string
+                description: Жанр фильма
+              rating:
+                type: number
+                description: Рейтинг фильма
+              description:
+                type: string
+                description: Описание фильма
+              actors:
+                type: string
+                description: Список актеров
+              kinopoisk_id:
+                type: string
+                description: Идентификатор фильма на КиноПоиске
+              premiere_world_datetime:
+                type: string
+                format: date-time
+                description: Дата мировой премьеры
+              time_bez:
+                type: integer
+                description: Продолжительность фильма в минутах
+              is_serial:
+                type: integer
+                description: Флаг, указывающий, является ли фильм сериалом (0 - не является сериалом, 1 - сериал)
+              title:
+                type: string
+                description: Название фильма/сериала
+          description: Массив фильмов
+        totalCount:
+          type: integer
+          description: Общее количество фильмов
+      required:
+        - films
+        - totalCount
+    SoonRequest:
+      type: object
+      properties:
+        offset:
+          type: integer
+          description: "Указывает начальную позицию, с которой нужно получить данные."
+          default: 0
+        limit:
+          type: integer
+          description: "Указывает максимальное количество записей или элементов данных, которые должны быть возвращены."
+          default: 20
+        
+    
+
+    SoonResponse:
+      type: object
+      properties:
+        films:
+          type: array
+          items:
+            type: object
+            properties:
+              trailer_video_link:
+                type: string
+                description: "Ссылка на трейлер фильма"
+              name:
+                type: string
+                description: "Название фильма"
+              name_foreign:
+                type: string
+                description: "Зарубежное название фильма"
+              director:
+                type: string
+                description: "Режиссер фильма"
+              country:
+                type: string
+                description: "Страна производства"
+              genre:
+                type: string
+                description: "Жанр фильма"
+              rating:
+                type: number
+                description: "Рейтинг фильма"
+              description:
+                type: string
+                description: "Описание фильма"
+              actors:
+                type: string
+                description: "Список актеров"
+              kinopoisk_id:
+                type: string
+                description: "Идентификатор фильма на КиноПоиске"
+              premiere_world_datetime:
+                type: string
+                format: date-time
+                description: "Дата мировой премьеры"
+              time_bez:
+                type: integer
+                description: "Продолжительность фильма в минутах"
+              id:
+                type: integer
+                description: "Уникальный идентификатор фильма"
+              is_serial:
+                type: integer
+                description: "Флаг, указывающий, является ли фильм сериалом (0 - не является сериалом, 1 - сериал)"
+              title:
+                type: string
+                description: "Название фильма/сериала"
+            required:
+              - trailer_video_link
+              - name
+              - name_foreign
+              - director
+              - country
+              - genre
+              - rating
+              - description
+              - actors
+              - kinopoisk_id
+              - premiere_world_datetime
+              - time_bez
+              - id
+              - is_serial
+              - title
+        totalCount:
+          type: integer
+          description: "Общее количество фильмов"
+      required:
+        - films
+        - totalCount
+    NewRequest:
+      type: object
+      properties:
+        offset:
+          type: number
+          minimum: 0
+        limit:
+          type: number
+          minimum: 0
+          maximum: 100
+      required:
+        - offset
+        - limit
+      example:
+        offset: 10
+        limit: 50
+    NewSuccessResponse:
+      type: object
+      properties:
+        films:
+          type: array
+          items:
+            type: object
+            properties:
+              trailer_video_link:
+                type: string
+                description: Ссылка на трейлер фильма
+              name:
+                type: string
+                description: Название фильма
+              name_foreign:
+                type: string
+                description: Зарубежное название фильма
+              director:
+                type: string
+                description: Режиссер фильма
+              country:
+                type: string
+                description: Страна производства
+              genre:
+                type: string
+                description: Жанр фильма
+              rating:
+                type: number
+                description: Рейтинг фильма
+              description:
+                type: string
+                description: Описание фильма
+              actors:
+                type: string
+                description: Список актеров
+              kinopoisk_id:
+                type: string
+                description: Идентификатор фильма на КиноПоиске
+              premiere_world_datetime:
+                type: string
+                format: date-time
+                description: Дата мировой премьеры
+              time_bez:
+                type: integer
+                description: Продолжительность фильма в минутах
+              id:
+                type: integer
+                description: Уникальный идентификатор фильма
+              is_serial:
+                type: integer
+                description: Флаг, указывающий, является ли фильм сериалом (0 - не является сериалом, 1 - сериал)
+              title:
+                type: string
+                description: Название фильма/сериала
+          description: Массив фильмов
+        totalCount:
+          type: integer
+          description: Число переданных в списке элементов
+      required:
+        - films
+        - totalCount
+    FilmsId:
+                type: object
+                properties:
+                  id:
+                    type: number
+                    description: Идентификатор фильма/сериала
+                  autor:
+                    type: string
+                    description: По состоянию на июнь 2023 года не используется в сервисе
+                  date:
+                    type: string
+                    description: По состоянию на июнь 2023 года не используется в сервисе
+                  short_story:
+                    type: string
+                    description: Краткое описание сюжета фильма/сериала
+                  full_story:
+                    type: string
+                    description: Подробное описание сюжета фильма/сериала
+                  xfields:
+                    type: string
+                    description: По состоянию на июнь 2023 года не используется в сервисе
+                  title:
+                    type: string
+                    description: Название фильма/сериала
+                  descr:
+                    type: string
+                    description: Описание фильма/сериала
+                  keywords:
+                    type: string
+                    description: Ключевые слова
+                  category:
+                    type: string
+                    description: category
+                  alt_name:
+                    type: string
+                    description: По состоянию на июнь 2023 года не используется в сервисе
+                  comm_num:
+                    type: number
+                    description: По состоянию на июнь 2023 года не используется в сервисе
+                  allow_comm:
+                    type: number
+                    description: По состоянию на июнь 2023 года не используется в сервисе
+                  allow_main:
+                    type: number
+                    description: По состоянию на июнь 2023 года не используется в сервисе
+                  approve:
+                    type: number
+                    description: По состоянию на июнь 2023 года не используется в сервисе
+                  fixed:
+                    type: number
+                    description: По состоянию на июнь 2023 года не используется в сервисе
+                  allow_br:
+                    type: number
+                    description: По состоянию на июнь 2023 года не используется в сервисе
+                  symbol:
+                    type: string
+                    description: По состоянию на июнь 2023 года не используется в сервисе
+                  tags:
+                    type: string
+                    description: Теги
+                  metatitle:
+                    type: string
+                    description: Метаназвание
+                  kp_id_movie:
+                    type: number
+                    description: Идентификатор элемента в таблице kinopoisk_data
+                  actors_dub:
+                    type: string
+                    description: Состав актеров дубляжа
+                  age:
+                    type: string
+                    description: Возрастное ограничение
+                  age_alt:
+                    type: string
+                    description: Возрастное ограничение (альтернативное)
+                  age_num:
+                    type: string
+                    description: Возрастное ограничение в цифровом виде
+                  artist:
+                    type: string
+                    description: Художник
+                  audience:
+                    type: string
+                    description: Аудитория
+                  awards:
+                    type: string
+                    description: По состоянию на июнь 2023 года не используется в сервисе
+                  background:
+                    type: string
+                    description: Фоновое изображение фильма/сериала на ресурсе Кинопоиска
+                  budget:
+                    type: string
+                    description: Бюджет фильма/сериала
+                  charges_rus:
+                    type: string
+                    description: Сборы в России
+                  charges_usa:
+                    type: string
+                    description: Сборы в США
+                  charges_world:
+                    type: string
+                    description: Мировые сборы
+                  composer:
+                    type: string
+                    description: Композитор
+                  concept:
+                    type: string
+                    description: По состоянию на июнь 2023 года не используется в сервисе
+                  content:
+                    type: string
+                    description: Тип контента
+                  country:
+                    type: string
+                    description: Страна производства
+                  covers:
+                    type: string
+                    description: По состоянию на июнь 2023 года не используется в сервисе
+                  description:
+                    type: string
+                    description: Описание фильма/сериала
+                  director:
+                    type: string
+                    description: Режиссер
+                  fanart:
+                    type: string
+                    description: По состоянию на июнь 2023 года не используется в сервисе
+                  genre:
+                    type: string
+                    description: Жанр
+                  imdb:
+                    type: string
+                    description: Рейтинг с ресурса IMDB
+                  imdb_num:
+                    type: string
+                    description: Количество людей, оценивших фильм/сериал
+                  installation:
+                    type: string
+                    description: Монтажеры
+                  kinopoisk_id:
+                    type: string
+                    description: Идентификатор фильма/сериала на Кинопоиске
+                  marketing:
+                    type: string
+                    description: Маркетинговые траты
+                  movie_type:
+                    type: string
+                    description: Тип фильма
+                  mpaa:
+                    type: string
+                    description: Установленный рейтинг системы рейтингов Американской киноассоциации
+                  mpaa_img:
+                    type: string
+                    description: Ссылка на изображение значка установленного рейтинга
+                  mpaa_num:
+                    type: string
+                    description: Рейтинг, прописанный установленным сокращением
+                  music_film:
+                    type: string
+                    description: Ссылка на саундтреки фильма в Яндекс.Музыке
+                  music_film_black:
+                    type: string
+                
+                  name:
+                    type: string
+                    description: Название фильма на русском языке
+                  name_foreign:
+                    type: string
+                    description: Название фильма на языке оригинала
+                  operator:
+                    type: string
+                    description: Оператор
+                  poster:
+                    type: string
+                    description: Адрес расположения постера
+                  posters:
+                    type: string
+                    description: По состоянию на июнь 2023 года не используется в сервисе
+                  poster_alt:
+                    type: string
+                    description: Адрес расположения альтернативного постера
+                  poster_big:
+                    type: string
+                    description: Адрес расположения постера большого размера
+                  premiere_rus:
+                    type: string
+                    description: Дата премьеры в России с указанием кинодистрибьютора
+                  premiere_rus_users:
+                    type: string
+                    description: Дата премьеры в России в сокращенном формате
+                  premiere_world:
+                    type: string
+                    description: Дата премьеры в мире
+                  premiere_world_datetime:
+                    type: string
+                    format: date-time
+                    description: Точное дата и время премьеры в мире
+                  premiere_world_users:
+                    type: string
+                    description: Дата премьеры в России в сокращенном формате
+                  producer:
+                    type: string
+                    description: Продюсер фильма/сериала
+                  promo:
+                    type: string
+                    description: По состоянию на июнь 2023 года не используется в сервисе
+                  rating:
+                    type: string
+                    description: Рейтинг фильма/сериала на Кинопоиске
+                  rating_img_kino:
+                    type: string
+                    description: Изображение рейтинга фильма/сериала на Кинопоиске
+                  rating_img_url_kino:
+                    type: string
+                    description: URL (адрес ресурса) изображения рейтинга фильма/сериала на Кинопоиске
+                  rating_num:
+                    type: string
+                    description: Количество пользователей, оценивших фильм/сериал
+                  release_bluray:
+                    type: string
+                    description: Дата релиза фильма/сериала на Blu-ray с указанием кинодистрибьютором
+                  release_bluray_users:
+                    type: string
+                    description: Дата релиза фильма/сериала на Blu-ray
+                  release_dvd:
+                    type: string
+                    description: Дата релиза фильма/сериала на DVD с указанием кинодистрибьютора
+                  release_dvd_users:
+                    type: string
+                    description: Дата релиза фильма/сериала на DVD
+                  scenario:
+                    type: string
+                    description: Авторы сценария
+                  screenshots:
+                    type: string
+                    description: По состоянию на июнь 2023 года не используется в сервисе
+                  shooting:
+                    type: string
+                    description: По состоянию на июнь 2023 года не используется в сервисе
+                  slogan:
+                    type: string
+                    description: Слоган фильма/сериала
+                  time:
+                    type: string
+                    description: Подробная длительность фильма/сериала
+                  time_bez:
+                    type: string
+                    description: Длительности фильма/сериала
+                  tracks:
+                    type: string
+                    description: По состоянию на июнь 2023 года не используется в сервисе
+                  trailer:
+                    type: string
+                    description: По состоянию на июнь 2023 года не используется в сервисе
+                  trailers:
+                    type: string
+
+                  trailers_content_type:
+                    type: string
+                    description: Формат видеофайла в трейлере
+                  trailers_description:
+                    type: string
+                    description: Описание трейлера
+                  trailers_image:
+                    type: string
+                    description: Ссылка на ресурс, который содержит в себе изображение превью трейлера
+                  trailers_name:
+                    type: string
+                    description: Тип трейлера
+                  trailer_cache:
+                    type: string
+                    description: По состоянию на июнь 2023 года не используется в сервисе
+                  trailer_height:
+                    type: string
+                    description: Вертикальный размер трейлера
+                  trailer_info:
+                    type: string
+                    description: Ссылка на информацию по трейлеру
+                  trailer_link:
+                    type: string
+                    description: Ссылка на трейлер
+                  trailer_link_cache:
+                    type: string
+                    description: По состоянию на июнь 2023 года не используется в сервисе
+                  trailer_name:
+                    type: string
+                    description: Тип трейлера
+                  trailer_time:
+                    type: string
+                    description: Длительность трейлера
+                  trailer_time_users:
+                    type: string
+                    description: Длительность трейлера, отражающаяся пользователю
+                  trailer_uppod:
+                    type: string
+                    description: По состоянию на июнь 2023
+                  trailer_uppod_cache:
+                    type: string
+                    description: По состоянию на июнь 2023 года не используется в сервисе
+                  trailer_width:
+                    type: string
+                    description: Горизонтальный размер трейлера
+                  updated:
+                    type: string
+                    description: Время последнего изменения данных фильма/сериала
+                  video:
+                    type: string
+                    description: По состоянию на июнь 2023 года не используется в сервисе
+                  year:
+                    type: string
+                    description: Год выпуска фильма/сериала
+                  year_title:
+                    type: string
+                    description: Год выпуска, указываемый в названии фильма/сериала
+                  flyers:
+                    type: string
+                    description: По состоянию на июнь 2023 года не используется в сервисе
+                  dvd_usa:
+                    type: string
+                    description: Сборы с DVD-релиза в США
+                  is_serial:
+                    type: boolean
+                    description: Флаг указания на то, является ли рассматриваемый в списке элемент сериалом (false - не является, true - является)
+
+    PostFilmsRequest:
+      type: object
+      properties:
+        offset:
+          type: number
+          description: Указывает начальную позицию, с которой нужно получить данные
+          default: 0
+        limit:
+          type: number
+          description: Указывает максимальное количество записей или элементов данных, которые должны быть возвращены.
+          default: 20
+        where:
+          type: object
+          properties:
+            title:
+              type: string
+              description: Название фильма/сериала
+            rating:
+              type: object
+              properties:
+                min:
+                  type: number
+                  description: Минимальное значение рейтинга
+                max:
+                  type: number
+                  description: Максимальное значение рейтинга
+              required:
+                - min
+                - max
+            imdb_rating:
+              type: object
+              properties:
+                min:
+                  type: number
+                  description: Минимальное значение рейтинга
+                max:
+                  type: number
+                  description: Максимальное значение рейтинга
+              required:
+                - min
+                - max
+            date:
+              type: object
+              properties:
+                min:
+                  type: string
+                  description: Минимальное значение года выпуска
+                max:
+                  type: string
+                  description: Максимальное значение года выпуска
+              required:
+                - min
+                - max
+            actors:
+              type: array
+              items:
+                type: string
+              description: Содержит в себе элементы типа string. Актерский состав
+            genres:
+              type: array
+              items:
+                type: string
+              description: Содержит в себе элементы типа string. Жанр фильма
+            countries:
+              type: array
+              items:
+                type: string
+              description: Содержит в себе элементы типа string. Страна производства фильма
+            is_serial:
+              type: boolean
+              description: Флаг указания на то, является ли рассматриваемый в списке элемент сериалом (false - не является, true - является)
+        sort:
+          type: array
+          items:
+            type: string
+          description: Содержит в себе элементы типа string. Параметры сортировки списка
+          default:
+            - "date DESC"
+            - "rating DESC"
+    PostFilmsResponse:
+      type: object
+      properties:
+        films:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                description: Уникальный идентификатор фильма
+              genres:
+                type: string
+                description: Список жанров фильма
+              is_serial:
+                type: integer
+                description: Флаг, указывающий, является ли фильм сериалом (0 - не является сериалом, 1 - сериал)
+              title:
+                type: string
+                description: Название фильма/сериала
+              date:
+                type: string
+                format: date-time
+                description: Дата выхода
+              trailer_video_link:
+                type: string
+                description: Ссылка на трейлер фильма
+              name:
+                type: string
+                description: Название фильма
+              name_foreign:
+                type: string
+                description: Зарубежное название фильма
+              director:
+                type: string
+                description: Режиссер фильма
+              country:
+                type: string
+                description: Страна производства
+              genre:
+                type: string
+                description: Жанр фильма
+              rating:
+                type: number
+                description: Рейтинг фильма
+              description:
+                type: string
+                description: Описание фильма
+              actors:
+                type: string
+                description: Список актеров
+              kinopoisk_id:
+                type: string
+                description: Идентификатор фильма на КиноПоиске
+              premiere_world_datetime:
+                type: string
+                format: date-time
+                description: Дата мировой премьеры
+              time_bez:
+                type: integer
+                description: Продолжительность фильма в минутах
+              imdb:
+                type: number
+                description: Рейтинг фильма на IMDb
+              is_disabled:
+                type: integer
+                description: Флаг отключения фильма (0 - не отключен, 1 - отключен)
+          description: Массив фильмов
+        totalCount:
+          type: number
+          description: Число переданных в списке элементов
+      required:
+        - films
+        - totalCount  
+
+    postSerialRequest:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Идентификатор сериала (параметр в пути запроса).
+      required:
+        - id  
+
+    postSerialErrorResponse:
+      type: object
+      properties:
+        status:
+          type: number
+          description: Статус ответа на запрос (в данном случае - ошибка).
+          example: 1
+        message:
+          type: string
+          description: Сообщение об ошибке.
+          example: "Сервер не может обработать ваш запрос."
+      required:
+        - status
+        - message
+
+    FilmsResponse:
+      type: object
+      properties:
+        films:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                description: Идентификатор фильма
+              autor:
+                type: string
+                description: Автор фильма
+              date:
+                type: string
+                format: date-time
+                description: Дата создания фильма
+              title:
+                type: string
+                description: Название фильма
+              kp_id_movie:
+                type: integer
+                description: Идентификатор фильма в Кинопоиске
+              seasons:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      description: Идентификатор сезона
+                    number:
+                      type: integer
+                      description: Номер сезона
+                    name:
+                      type: string
+                      description: Название сезона
+                    description:
+                      type: string
+                      description: Описание сезона
+                    series:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                            description: Идентификатор серии
+                          number:
+                            type: integer
+                            description: Номер серии
+                          name:
+                            type: string
+                            description: Название серии
+                          description:
+                            type: string
+                            description: Описание серии
+        totalCount:
+            type: number
+            description: Общее количество фильмов
+      required:
+        - films
+        - totalCount
+
+    AdminSerialUpdateRequest:
+      type: object
+      properties:
+        serial_id:
+          type: number
+          description: Идентификатор сериала, данные о котором записываются (в БД поле имеет название filmid)
+        is_serial:
+          type: integer
+          minimum: 0
+          maximum: 1
+          description: Флаг, указывающий на то, является ли рассматриваемый элемент сериалом
+
+      required:
+        - serial_id
+        - is_serial
+
+    SeasonCreateRequest:
+      type: object
+      properties:
+        serial_id:
+          type: number
+          description: Идентификатор сериала, данные о котором записываются (в БД поле имеет название filmid)
+        name:
+          type: string
+          description: Название сезона
+        description:
+          type: string
+          description: Описание сезона
+        number:
+          type: number
+          description: Номер сезона
+      required:
+        - number
+        - serial_id
+
+    SeasonCreateResponse:
+      type: object
+      properties:
+        status:
+          type: number
+          description: Статус ответа на запрос
+      required:
+        - status
+
+    SeasonUpdateRequest:
+      type: object
+      required:
+        - name
+        - description
+        - number
+      properties:
+        name:
+          type: string
+          description: Название сезона
+        description: 
+          type: string
+          description: Описание сезона
+        number:
+          type: number
+          description: Номер сезона
+
+    SeasonUpdateResponse:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: number
+          description: Статус ответа на запрос
+
+    HealthResponse:
+      type: object
+      properties:
+        data:
+          type: string
+          example: "OK"
+          description: Сообщение ответа
+      required:
+        - data
+
+
+paths:
+  /films/list:
+    post:
+      summary: Получить список фильмов/сериалов
+      description: Метод ожидает JSON с параметрами. Если полученный JSON успешно провалидирован, пользователю передаётся список с фильмами/сериалами. 
+      tags:
+      - Методы для работы пользователей с фильмами и сериалами
+      requestBody:
+        description: Тело запроса
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FilmListRequest'
+            examples:
+              example1:
+                value:
+                  offset: 0
+                  limit: 20
+                  where:
+                    is_serial: false
+                  sort:
+                    - "date DESC"
+                    - "rating DESC"
+      responses:
+        '200':
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FilmList'
+              examples:
+                example1:
+                  value:
+                    films:
+                      - id: 1848
+                        genres: "фантастика,детектив,ужасы"
+                        is_serial: 0
+                        title: "Нечто / The Thing (1982)"
+                        date: "2020-02-04T20:26:41.000Z"
+                        trailer_video_link: "https://www.youtube.com/embed/-9PfGmxXzhQ"
+                        name: "Нечто"
+                        name_foreign: "The Thing"
+                        director: "Джон Карпентер"
+                        country: "США"
+                        genre: "ужасы, фантастика, детектив"
+                        rating: 7.886
+                        description: "Командеt ученых американской исследовательской базы в Антарктике предстоит столкнуться с необъяснимым, чудовищным кошмаром. Отрезанные от всего света полярники вступают в неравную схватку с инопланетной тварью, пробудившейся после тысячелетней спячки во льдах."
+                        actors: "Курт Рассел, Кит Дэвид, Уилфорд Бримли, Т.К. Картер, Дэвид Кленнон, Ричард А. Дайсарт, Чарльз Хэллахан, Питер Мэлоуни, Ричард Мейсер, Дональд Моффет"
+                        kinopoisk_id: "8366"
+                        premiere_world_datetime: "1982-06-25T00:00:00.000Z"
+                        time_bez: 109
+                        imdb: 8.1
+                        is_disabled: 0
+                      - id: 1847
+                        genres: "фантастика,драма,триллер,детектив"
+                        is_serial: 0
+                        title: "Знаки / Signs (2002)"
+                        date: "2020-02-04T20:25:36.000Z"
+                        trailer_video_link: "https://www.youtube.com/embed/ydzxVhlpQ7M"
+                        name: "Знаки"
+                        name_foreign: "Signs"
+                        director: "М. Найт Шьямалан"
+                        country: "США"
+                        genre: "фантастика, триллер, драма, детектив"
+                        rating: 6.981
+                        description: "Жизнь никогда не баловала фермера Грэма Хесса удивительными событиями и происшествиями. Ровно до того дня, когда он увидел, что его кукурузное поле испещрено непостижимыми, гигантскими знаками из примятых стеблей. Жители маленького городка в Пенсильвании пытаются найти разгадку этого феномена. Но никто не жаждет найти ее так страстно, как сам фермер, ведь фантастические события, происходящие на его поле бросают вызов всему, что он знает и во что он верит в этом мире. Хесс начинает личное расследование, еще не ведая, какие невообразимые, пугающие ответы получит он на свои вопросы..."
+                        actors: "Мэл Гибсон, Хоакин Феникс, Рори Калкин, Эбигейл Бреслин, Черри Джонс, М. Найт Шьямалан, Патриша Кэлембер, Тед Саттон, Мерритт Уивер, Лэнни Флаэрти"
+                        kinopoisk_id: "832"
+                        premiere_world_datetime: "2002-07-29T00:00:00.000Z"
+                        time_bez: 106
+                        imdb: 6.7
+                        is_disabled: 0
+                    totalCount: 1817
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 500
+                  message:
+                    type: string
+                    example: Internal server error
+
+  /films/count:
+    post:
+      summary: Получить количество фильмов/сериалов
+      description: Метод не ожидает входящих параметров. При переходе пользователя в сервис 1Win TV происходит возвращение значения количества фильмов/сериалов. 
+      tags:
+      - Методы для работы пользователей с фильмами и сериалами
+      requestBody:
+        description: Запрос без параметров
+        required: false
+        content:
+          application/json:
+            example:
+              {}
+      responses:
+        '200':
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FilmCountResponse'
+              example:
+                value:
+                  films:
+                    count: 1819
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 500
+                  message:
+                    type: string
+                    example: Internal server error
+  /films/slider:
+    post:
+      summary: Получить фильмы/сериалы в слайдере
+      description: Метод ожидает JSON с параметрами. Если полученный JSON успешно провалидирован, пользователю передаётся список с фильмами/сериалами в слайдере. 
+      tags:
+      - Методы для работы пользователей с фильмами и сериалами
+      requestBody:
+        description: Тело запроса
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FilmSliderRequest'
+            example:
+              offset: 0
+              limit: 20
+      responses:
+        '200':
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FilmSlider'
+              example:
+                value:
+                  films:
+                    - id: 9
+                      trailer_video_link: "https://www.youtube.com/embed/k7izcLjrArc"
+                      name: "Легенда"
+                      name_foreign: "Legend"
+                      director: "Брайан Хелгеленд"
+                      country: "Великобритания,  Франция,  США"
+                      genre: "криминал,  триллер,  драма"
+                      rating: 7.145
+                      description: "Фильм расскажет историю близнецов Реджи и Ронни Крэй, культовых фигур преступного мира Великобритании 1960-х. Братья возглавляли самую влиятельную бандитскую группировку Ист-Энда. В их послужном списке: вооруженные грабежи, рэкет, поджоги, покушения, убийства и собственный ночной клуб, куда доезжали даже голливудские знаменитости. Среди их жертв - криминальные авторитеты Джек МакВитти и Джордж Корнелл."
+                      actors: "Том Харди, Эмили Браунинг, Дэвид Тьюлис, Даффи, Кристофер Экклстон, Чазз Пальминтери, Пол Андерсон, Джошуа Хилл, Колин Морган, Тара Фитцджеральд"
+                      kinopoisk_id: "839954"
+                      premiere_world_datetime: "2015-09-03T00:00:00.000Z"
+                      time_bez: 131
+                      is_serial: 0
+                      title: "Легенда / Legend (2015)"
+                  totalCount: 16
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              example:
+                status: 500
+                message: Internal server error
+  /films/soon:
+    post:
+      summary: "Получить список фильмов/сериалов в разделе Coming Soon"
+      description: Метод ожидает JSON с параметрами. Если полученный JSON успешно провалидирован, пользователю передаётся список с фильмами/сериалами из раздела coming soon. 
+      tags:
+      - Методы для работы пользователей с фильмами и сериалами
+      requestBody:
+        description: "Тело запроса"
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SoonRequest'
+            example:
+              offset: 0
+              limit: 20
+      responses:
+        '200':
+          description: "Успешный ответ"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SoonResponse'
+              example:
+                films:
+                  - id: 669
+                    genres: "боевик, триллер, криминал"
+                    is_serial: 0
+                    title: "Двойной форсаж / 2 Fast 2 Furious (2003)"
+                    date: "2020-02-04T20:26:41.000Z"
+                    trailer_video_link: "https://www.youtube.com/embed/F_VIM03DXWI"
+                    name: "Двойной форсаж"
+                    name_foreign: "2 Fast 2 Furious"
+                    director: "Джон Синглтон"
+                    country: "США, Германия"
+                    genre: "боевик, триллер, криминал"
+                    rating: 7.175
+                    description: "Бывший полицейский Брайан О`Коннер вместе с напарником Романом Пирсом собираются перевезти крупную сумму «грязных» денег известного мафиози Картера Верона в качестве его подручных..."
+                    actors: "Пол Уокер, Тайриз Гибсон, Ева Мендес, Коул Хаузер, Лудакрис, Том Бэрри, Джеймс Римар, Девон Аоки, Мэтт Галлини, Роберто «Санс» Санчес"
+                    kinopoisk_id: "323"
+                    premiere_world_datetime: "2003-06-03T00:00:00.000Z"
+                    time_bez: 107
+                totalCount: 1819
+  /films/new:
+    post:
+      summary: Получение списка новых фильмов/сериалов
+      tags:
+      - Методы для работы пользователей с фильмами и сериалами
+      description: Метод ожидает JSON с параметрами. Если полученный JSON успешно провалидирован, пользователю передаётся список с новыми фильмами/сериалами. 
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewRequest'
+            example:
+              offset: 10
+              limit: 50
+      responses:
+        '200':
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NewSuccessResponse'
+              example:
+                films:
+                  - trailer_video_link: "https://www.youtube.com/embed/F_VIM03DXWI"
+                    name: "Двойной форсаж"
+                    name_foreign: "2 Fast 2 Furious"
+                    director: "Джон Синглтон"
+                    country: "США, Германия"
+                    genre: "боевик, триллер, криминал"
+                    rating: 7.175
+                    description: "Бывший полицейский Брайан О`Коннер вместе с напарником Романом Пирсом собираются перевезти крупную сумму «грязных» денег известного мафиози Картера Верона в качестве его подручных. Но на самом деле эта работа является только прикрытием для Брайана, который вместе с тайным агентом Моникой Фуэнтес должны уличить изворотливого преступника..."
+                    actors: "Пол Уокер, Тайриз Гибсон, Ева Мендес, Коул Хаузер, Лудакрис, Том Бэрри, Джеймс Римар, Девон Аоки, Мэтт Галлини, Роберто «Санс» Санчес"
+                    kinopoisk_id: "323"
+                    premiere_world_datetime: "2003-06-03T00:00:00.000Z"
+                    time_bez: 107
+                    id: 669
+                    is_serial: 0
+                    title: "Двойной форсаж / 2 Fast 2 Furious (2003)"
+                totalCount: 1819
+  
+  /films/{id}:
+    post:
+      summary: Получение информации о фильме/сериале по идентификатору
+      tags:
+      - Методы для работы пользователей с фильмами и сериалами
+      description: Метод ожидает с path-параметром id, который является идентификатором рассматриваемого объекта фильма/сериала. 
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Идентификатор фильма/сериала
+          schema:
+            type: number
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/FilmsId'
+              example: 
+                  films:
+                  - trailer_video_link: "https://www.youtube.com/embed/F_VIM03DXWI"
+                    name: "Двойной форсаж"
+                    name_foreign: "2 Fast 2 Furious"
+                    director: "Джон Синглтон"
+                    country: "США, Германия"
+                    genre: "боевик, триллер, криминал"
+                    rating: 7.175
+                    description: "Бывший полицейский Брайан О`Коннер вместе с напарником Романом Пирсом собираются перевезти крупную сумму «грязных» денег известного мафиози Картера Верона в качестве его подручных. Но на самом деле эта работа является только прикрытием для Брайана, который вместе с тайным агентом Моникой Фуэнтес должны уличить изворотливого преступника..."
+                    actors: "Пол Уокер, Тайриз Гибсон, Ева Мендес, Коул Хаузер, Лудакрис, Том Бэрри, Джеймс Римар, Девон Аоки, Мэтт Галлини, Роберто «Санс» Санчес"
+                    kinopoisk_id: "323"
+                    premiere_world_datetime: "2003-06-03T00:00:00.000Z"
+                    time_bez: 107
+                    id: 669
+                    is_serial: 0
+                    title: "Двойной форсаж / 2 Fast 2 Furious (2003)"
+
+
+        '400':
+          description: Ошибка запроса
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                    description: Статус ответа на запрос
+                    example: 1
+                  message:
+                    type: string
+                    description: Сообщение об ошибке
+                    example: "Ошибка: неверный идентификатор фильма/сериала"
+  /films:
+    post:
+      summary: Получение информации о фильмах/сериалах из списка.
+      tags:
+      - Методы для работы пользователей с фильмами и сериалами
+      description: Метод ожидает JSON с параметрами. Если полученный JSON успешно провалидирован, пользователю передаётся список с фильмами/сериалами. 
+      requestBody:
+        description: Запрос с параметрами для получения списка фильмов/сериалов.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostFilmsRequest'
+            example:
+              offset: 0
+              limit: 20
+      responses:
+        '200':
+          description: Успешный ответ.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostFilmsResponse'
+
+  /serial/{id}:
+    post:
+      summary: Метод предназначен для получения информации о сериале по его идентификатору, идентификатору сезона и эпизода. По состоянию на июнь 2023 года присутствует баг, не позволяющий передавать в пути номера сезона и эпизода. 
+      operationId: postSerial
+      tags:
+      - Методы для работы пользователей с фильмами и сериалами
+      description: Метод должен ожидать path-параметры id (поле seasons.filmId), season (поле seasons.number), episode (поле episodes.number)в пути запроса. Однако по состоянию на июнь 2023 года данный метод реализован и успешно работает исключительно при передаче в пути запроса path-параметра id. 
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: Идентификатор сериала
+      requestBody:
+        description: Запрос для получения информации о сериале
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/postSerialRequest'
+      responses:
+        '200':
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+               
+        '500':
+          description: Внутренняя ошибка сервера
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/postSerialErrorResponse'
+
+  /admin/list:
+    post:
+      summary: Метод предназначен для получения админом списка сериалов.
+      tags:
+      - Методы для работы администраторов с фильмами и сериалами
+      description: Метод ожидает JSON с параметрами. Если полученный JSON успешно провалидирован, пользователю передаётся список с фильмами/сериалами. 
+      requestBody:
+        description: Запрос с параметрами для получения списка фильмов/сериалов.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostFilmsRequest'
+            example:
+              offset: 0
+              limit: 20
+      responses:
+        '200':
+          description: Успешный ответ.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FilmsResponse'
+              example:
+                films:
+                  - id: 1851
+                    autor: ly4wii
+                    date: '2020-05-04T20:28:09.000Z'
+                    title: Мандалорец
+                    kp_id_movie: 1118138
+                    seasons:
+                      - id: 1
+                        number: 1
+                        name: Сезон 1
+                        description: Описание первого сезона
+                        series:
+                          - id: 1
+                            number: 1
+                            name: Первая серия первого сезона
+                            description: Описание первой серии первого сезона
+                          - id: 3
+                            number: 3
+                            name: Третья серия первого сезона
+                            description: Описание третьей серии первого сезона
+                          - id: 4
+                            number: 4
+                            name: Четвертая серия первого сезона
+                            description: Описание четвертой серии первого сезона
+                          - id: 2
+                            number: 5
+                            name: New name
+                            description: New description
+                totalCount: 1828
+
+  /admin/serial/update/{id}:
+    post:
+      summary: Изменение идентификатора сериала
+      tags:
+        - Методы для работы администраторов с фильмами и сериалами
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: Идентификатор сериала
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminSerialUpdateRequest'
+      responses:
+        '200':
+          description: Успешный ответ
+          content:
+            application/json:
+              example:
+                status: 200
+
+        '500':
+          description: Внутренняя ошибка сервера
+          content:
+            application/json:
+              example:
+                status: 500
+                message: Внутренняя ошибка сервера
+
+        5XX: 
+          
+          description: Ошибка сервера базы данных
+          content:
+            application/json:
+              example:
+                error: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'WHERE `id` = 2' at line 1
+
+  /admin/serial/season/create:
+    post:
+      summary: Создать сезон сериала
+      description: Данный метод ожидает JSON с параметрами, которые необходимо внести в базу данных. 
+      tags:
+        - Методы для работы администраторов с фильмами и сериалами
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SeasonCreateRequest'
+            examples:
+              example1:
+                value:
+                  serial_id: 4
+                  name: "Some name"
+                  description: "Some description"
+                  number: 4
+      responses:
+        '200':
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SeasonCreateResponse'
+              examples:
+                example1:
+                  value:
+                    status: 200
+        5XX: 
+          
+          description: У данного метода существуют кастомные ошибки, которые могут происходить в связи с нехваткой данных (некорректными введенными данными) при попытке проведения действий с БД.
+          content:
+            application/json:
+              example:
+                error: "Column 'number' cannot be null"
+
+  /admin/serial/season/update/{id}:
+    post:
+      summary: Метод предназначен для изменения в таблице 1wintv.seasons данных о сезонах каких-либо сериалов. 
+      description: >
+        Данный метод ожидает JSON с параметрами, которые необходимо изменить в базе данных, и идентификатор
+        изменяемого объекта/сезона в пути запроса.
+      tags:
+        - Методы для работы администраторов с фильмами и сериалами
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: Идентификатор сезона, который требуется изменить.
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SeasonUpdateRequest'
+            examples:
+              example1:
+                value:
+                  name: "New name"
+                  description: "New description"
+                  number: 5
+      responses:
+        '200':
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SeasonUpdateResponse'
+              examples:
+                example1:
+                  value:
+                    status: 200
+        '5XX':
+          description: Ошибка сервера базы данных
+          content:
+            application/json:
+              example:
+                error: "You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'WHERE `id` = 11' at line 1"
+
+  /admin/serial/episode/update/{id}:
+    post:
+      summary: Метод предназначен для изменения в таблице 1wintv.seasons данных о сезонах каких-либо сериалов. 
+      description: >
+        Данный метод ожидает JSON с параметрами, которые необходимо изменить в базе данных, и идентификатор
+        изменяемого объекта/эпизода в пути запроса (id является path-параметром).
+      tags:
+        - Методы для работы администраторов с фильмами и сериалами
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: Идентификатор эпизода, который требуется изменить.
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SeasonUpdateRequest'
+            examples:
+              example1:
+                value:
+                  name: "New name"
+                  description: "New description"
+                  number: 5
+      responses:
+        '200':
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SeasonUpdateResponse'
+              examples:
+                example1:
+                  value:
+                    status: 200
+        '5XX':
+          description: Ошибка сервера базы данных
+          content:
+            application/json:
+              example:
+                error: "You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'WHERE `id` = 2' at line 1"
+
+  /health:
+    post:
+      summary: Проверка работоспособности сервиса
+      description: >
+        Метод POST health предназначен для проверки работоспособности сервиса. 
+        Вызов метода происходит посредством Kubernetes:  .get('/health', (ctx) => { ctx.body = 'OK'; })
+      tags:
+        - Метод для проверки работы сервиса
+      responses:
+        '200':
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+        default:
+          description: Ошибка
+          content:
+            application/json:
+              example:
+                error: "Response status code not OK"
