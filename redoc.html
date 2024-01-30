@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenAPI Documentation with Redoc</title>
+    <!-- Подключение стилей Redoc -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/redoc@latest/bundles/redoc.standalone.css" />
+</head>
+<body>
+    <!-- Элемент, в который будет встроен Redoc -->
+    <div id="redoc-container"></div>
+
+    <!-- Подключение Redoc -->
+    <script src="https://cdn.jsdelivr.net/npm/redoc@latest/bundles/redoc.standalone.js"></script>
+
+    <script>
+        // Получение значения 'spec' из URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const specFile = urlParams.get('spec');
+
+        // Инициализация Redoc с указанием пути к файлу OpenAPI
+        Redoc.init(specFile, {
+            // Дополнительные настройки, если необходимо
+        }, document.getElementById('redoc-container'));
+    </script>
+</body>
+</html>
